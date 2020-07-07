@@ -20,6 +20,7 @@ class MyFav extends Component {
         super();
         this.state = {
             isLoading           : true,
+            isLoader            : false,
             errToasts           : false,
             favNum              : 0,
             user_id             : 123,
@@ -38,16 +39,22 @@ class MyFav extends Component {
 
     }
 
-    onClickFav = (id) => {
+    onClickFav = (id, i) => {
+
+        this.setState({
+            isLoader : true
+        });
 
         axios.post(`https://cors-anywhere.herokuapp.com/https://alaaelden.aait-sa.com/api/favouriteBlog`, { id : id  , user_id : this.state.user_id })
             .then( (response)=> {
 
                 this.setState({
+                    isLoader            : false,
                     Toasts              : response.data.msg,
                     errToasts           : true,
-                    favNum              : id,
                 });
+
+                this.state.items.splice(i,1);
 
                 setTimeout(
                     function() {
@@ -58,9 +65,9 @@ class MyFav extends Component {
 
             })
             .catch( (error)=> {
-                this.setState({isLoading: false});
+                this.setState({isLoader: false});
             }).then(()=>{
-            this.setState({isLoading: false});
+            this.setState({isLoader: false});
         });
 
     };
@@ -70,6 +77,14 @@ class MyFav extends Component {
         if (this.state.isLoading === true) {
             return (
                 <div className='loading'>
+                    <img src={require('../imgs/loader.gif')} />
+                </div>
+            );
+        }
+
+        if (this.state.isLoader === true) {
+            return (
+                <div className='loader'>
                     <img src={require('../imgs/loader.gif')} />
                 </div>
             );
@@ -85,46 +100,42 @@ class MyFav extends Component {
 
                 <Header />
 
-                {/*<div className="content_view">*/}
-                {/*    <Container>*/}
-                {/*        <Row>*/}
-                {/*            {this.state.items.map(item =>*/}
-                {/*                <Col xs="6" sm="4">*/}
-                {/*                    <Animated*/}
-                {/*                        animationIn             = "fadeInUp"*/}
-                {/*                        animationInDuration     = {1000}*/}
-                {/*                        animationOutDuration    = {1000}*/}
-                {/*                        isVisible               = {true}*/}
-                {/*                    >*/}
-                {/*                        <div className="section_e3lan">*/}
-                {/*                            <div className="img_e3lan">*/}
-                {/*                                <button onClick={() => this.onClickFav(item.id)} className='clickFav'>*/}
-                {/*                                    {this.state.favNum === item.id ? (*/}
-                {/*                                        <MdFavorite />*/}
-                {/*                                    ) : (*/}
-                {/*                                        <MdFavoriteBorder />*/}
-                {/*                                    )}*/}
-                {/*                                </button>*/}
-                {/*                                <img src={ item.img } />*/}
-                {/*                                <p>{ item.date }</p>*/}
-                {/*                            </div>*/}
-                {/*                            <Link to={{pathname: '/details/'+ item.id, id : { id: item.id }}} className="nav-link">*/}
-                {/*                                <div className="block_e3lan">*/}
-                {/*                                    <h4>{ item.title }</h4>*/}
-                {/*                                    <p>{ item.description }</p>*/}
-                {/*                                    <h6>*/}
-                {/*                                        <span><FaUserAlt /> { item.user } </span>*/}
-                {/*                                        <span><FaMapMarkerAlt />  { item.date } </span>*/}
-                {/*                                    </h6>*/}
-                {/*                                </div>*/}
-                {/*                            </Link>*/}
-                {/*                        </div>*/}
-                {/*                    </Animated>*/}
-                {/*                </Col>*/}
-                {/*            )}*/}
-                {/*        </Row>*/}
-                {/*    </Container>*/}
-                {/*</div>*/}
+                <div className="content_view">
+                    <Container>
+                        <Row>
+                            {this.state.items.map((item, i) =>
+                                <Col xs="6" sm="4">
+                                    <Animated
+                                        animationIn             = "fadeInUp"
+                                        animationInDuration     = {1000}
+                                        animationOutDuration    = {1000}
+                                        isVisible               = {true}
+                                    >
+                                        <div className="section_e3lan">
+                                            <div className="img_e3lan">
+                                                <button onClick={() => this.onClickFav(item.id, i)} className='clickFav'>
+                                                    <MdFavorite className='iconFav' />
+                                                </button>
+                                                <img src={ item.img } />
+                                                <p>{ item.date }</p>
+                                            </div>
+                                            <Link to={{pathname: '/details/'+ item.id, id : { id: item.id }}} className="nav-link">
+                                                <div className="block_e3lan">
+                                                    <h4>{ item.title }</h4>
+                                                    <p>{ item.description }</p>
+                                                    <h6>
+                                                        <span><FaUserAlt /> { item.user } </span>
+                                                        <span><FaMapMarkerAlt />  { item.date } </span>
+                                                    </h6>
+                                                </div>
+                                            </Link>
+                                        </div>
+                                    </Animated>
+                                </Col>
+                            )}
+                        </Row>
+                    </Container>
+                </div>
 
             </div>
 

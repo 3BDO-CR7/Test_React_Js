@@ -7,12 +7,14 @@ class Header extends Component {
     constructor() {
         super();
         this.state = {
+            userInfo : localStorage.getItem('user_data')
         };
     }
 
-    componentDidMount() {
-
+    componentWillMount() {
+        console.log('user_data', localStorage.getItem('user_data'));
     }
+
 
     render() {
         return (
@@ -33,8 +35,19 @@ class Header extends Component {
                                 <ul>
                                     <li><Link to={'/'} className="nav-link"> الرئيسيه </Link></li>
                                     <li><Link to={'/myFav'} className="nav-link"> المفضله </Link></li>
-                                    <li><Link to={'/signUp'} className="nav-link"> التسجيل </Link></li>
-                                    <li><Link to={'/login'} className="nav-link"> تسجيل دخول </Link></li>
+                                    <li><Link to={'/AddAdv'} className="nav-link"> إضافه إعلان </Link></li>
+                                    {
+                                        this.state.userInfo === null ?
+                                            <li><Link to={'/signUp'} className="nav-link"> التسجيل </Link></li>
+                                            :
+                                            null
+                                    }
+                                    {
+                                        this.state.userInfo === null ?
+                                            <li><Link to={'/login'} className="nav-link"> تسجيل دخول </Link></li>
+                                            :
+                                            null
+                                    }
                                 </ul>
                             </Col>
                         </Row>
