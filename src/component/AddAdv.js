@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Container, Row, Col, Button, Form, Label, Input} from 'reactstrap';
 import '../App.css';
 import {Animated} from "react-animated-css";
+import { IoIosAdd, IoIosClose, IoMdRepeat } from 'react-icons/io';
 
 import ImageUploading from "react-images-uploading";
 
@@ -104,32 +105,55 @@ class AddAdv extends Component {
                             {({ imageList, onImageUpload, onImageRemoveAll }) => (
                                 // write your building UI
                                 <div className="upload__image-wrapper">
-                                    <button onClick={onImageUpload}>Upload images</button>&nbsp;
-                                    <button onClick={onImageRemoveAll}>Remove all images</button>
-                                    {imageList.map(image => (
-                                        <div key={image.key} className="image-item">
-                                            <img src={image.dataURL} alt="" width="100" />
-                                            <div className="image-item__btn-wrapper">
-                                                <button onClick={image.onUpdate}>Update</button>
-                                                <button onClick={image.onRemove}>Remove</button>
-                                            </div>
-                                        </div>
-                                    ))}
+                                    <button onClick={onImageUpload} className='upload_img'><IoIosAdd /></button>
+                                    {
+                                        imageList.length !== 0 ?
+                                            <button onClick={onImageRemoveAll} className='remove_all'>حذف كل الصور</button>
+                                            :
+                                            null
+                                    }
+                                    <div className='over_upload'>
+                                        {
+                                            imageList.map(image => (
+                                                <div key={image.key} className="image_item">
+                                                    <img src={image.dataURL} alt="" />
+                                                    <button onClick={image.onUpdate} className='update'><IoMdRepeat /></button>
+                                                    <button onClick={image.onRemove} className='remove'><IoIosClose /></button>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
                                 </div>
                             )}
                         </ImageUploading>
 
                         <Form className="form_add" onSubmit={this.onSubmit.bind(this)} noValidate>
-                            <div className="input_grop">
-                                <Label for="examplePhone">رقم الجوال</Label>
-                                <Input
-                                    type        = "phone"
-                                    name        = "phone"
-                                    id          = "examplePhone"
-                                    value       = {this.state.phone}
-                                    onChange    = {e => {this.setState({phone : e.target.value})}}
-                                />
-                            </div>
+                            <Row>
+                                <Col xs="12" sm="6">
+                                    <div className="input_grop">
+                                        <Label for="examplePhone">اسم الإعلان</Label>
+                                        <Input
+                                            type        = "phone"
+                                            name        = "phone"
+                                            id          = "examplePhone"
+                                            value       = {this.state.phone}
+                                            onChange    = {e => {this.setState({phone : e.target.value})}}
+                                        />
+                                    </div>
+                                </Col>
+                                <Col xs="12" sm="6">
+                                    <div className="input_grop">
+                                        <Label for="examplePhone">السعر</Label>
+                                        <Input
+                                            type        = "phone"
+                                            name        = "phone"
+                                            id          = "examplePhone"
+                                            value       = {this.state.phone}
+                                            onChange    = {e => {this.setState({phone : e.target.value})}}
+                                        />
+                                    </div>
+                                </Col>
+                            </Row>
                             <Button
                                 color           = "info"
                                 className       = "btn_button"

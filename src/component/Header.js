@@ -34,8 +34,9 @@ class Header extends Component {
                             <Col xs="6" sm="9">
                                 <ul>
                                     <li><Link to={'/'} className="nav-link"> الرئيسيه </Link></li>
+                                    <li><Link to={'/About'} className="nav-link"> من نحن </Link></li>
                                     <li><Link to={'/myFav'} className="nav-link"> المفضله </Link></li>
-                                    <li><Link to={'/AddAdv'} className="nav-link"> إضافه إعلان </Link></li>
+                                    <li><Link to={'/TermsAdv'} className="nav-link"> إضافه إعلان </Link></li>
                                     {
                                         this.state.userInfo === null ?
                                             <li><Link to={'/signUp'} className="nav-link"> التسجيل </Link></li>

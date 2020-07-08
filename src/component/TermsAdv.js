@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 
 import axios from 'axios';
 
-class About extends Component {
+class TermsAdv extends Component {
     constructor() {
         super();
         this.state = {
@@ -24,7 +24,7 @@ class About extends Component {
 
     componentDidMount() {
 
-        axios.post(`${CONST.url}aboutUs`, { lang : 'ar'})
+        axios.post(`${CONST.url}adsTermsAndConditions`, { lang : 'ar'})
             .then(res => {
                 this.setState({ text : res.data.data, isLoading : false });
                 console.log('data', res.data);
@@ -51,6 +51,7 @@ class About extends Component {
                 <div className="content_view text_center">
                     <Container>
                         <div className='section_about'>
+                            <h4>شروط الإعلان</h4>
                             <div className='overHidden'>
                                 <Animated
                                     animationIn             = "fadeInUp"
@@ -62,6 +63,14 @@ class About extends Component {
                                 </Animated>
                             </div>
                             <h4>{ this.state.text }</h4>
+                            <div className='flex_between padding_all_30'>
+                                <Link to={{pathname: '/AddAdv/'}} className='padding_all_10 btn_blue color_white width_150'>
+                                    موافق
+                                </Link>
+                                <Link to={{pathname: '/'}} className='padding_all_10 btn_red color_white width_150'>
+                                    غير موافق
+                                </Link>
+                            </div>
                         </div>
                     </Container>
                 </div>
@@ -72,4 +81,4 @@ class About extends Component {
     }
 }
 
-export default About;
+export default TermsAdv;

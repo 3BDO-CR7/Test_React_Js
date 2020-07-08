@@ -3,11 +3,12 @@ import {Container, Row, Col, Button, Alert} from 'reactstrap';
 import '../App.css';
 import {Animated} from "react-animated-css";
 import { FaUserAlt, FaMapMarkerAlt } from 'react-icons/fa';
-import { MdFavoriteBorder, MdFavorite } from 'react-icons/md';
+import { MdFavoriteBorder, MdFavorite, MdKeyboardArrowDown , MdNearMe} from 'react-icons/md';
 
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
+import CONST from '../const/api';
 
 import Header from '../component/Header';
 
@@ -26,7 +27,10 @@ class Home extends Component {
             user_id             : 123,
             items               : [],
             sliders             : [],
+            countries           : [],
+            cities              : [],
             Toasts              : '',
+            value               : '',
             options             : {
                 loop        : true,
                 margin      : 10,
@@ -56,16 +60,35 @@ class Home extends Component {
 
     componentDidMount() {
 
-        axios.get(`https://alaaelden.aait-sa.com/api/get-blogs`)
+        this.getBlogs();
+
+        axios.post(`${CONST.url}countries`, { lang : 'ar' })
+            .then(res => {
+                this.setState({ countries : res.data.data});
+                console.log('res', res.data.data)
+            });
+
+    }
+
+    change(event){
+
+        console.log('event', event.target.value)
+
+        // axios.post(`${CONST.url}cities`, { lang: 'ar' , country_id : event.target.value })
+        //     .then( (res)=> {
+        //         this.setState({ cities: res.data.data });
+        //     });
+
+        // setTimeout(()=>{
+        //     this.getBlogs();
+        // },1000);
+    }
+
+    getBlogs(){
+        axios.get(`${CONST.url}get-blogs`)
             .then(res => {
                 this.setState({ items : res.data.data, isLoading : false });
             });
-
-        axios.get(`https://alaaelden.aait-sa.com/api/getSlider`)
-            .then(res => {
-                this.setState({ sliders : res.data.data});
-            });
-
     }
 
     onClickFav = (id) => {
@@ -73,7 +96,7 @@ class Home extends Component {
         if(localStorage.getItem('user_data') === null || localStorage.getItem('user_data') === undefined){
             this.props.history.push('/login');
         }else {
-            axios.post(`https://cors-anywhere.herokuapp.com/https://alaaelden.aait-sa.com/api/favouriteBlog`, { id : id  , user_id : this.state.user_id })
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}/favouriteBlog`, { id : id  , user_id : this.state.user_id })
                 .then( (response)=> {
 
                     this.setState({
@@ -119,21 +142,60 @@ class Home extends Component {
 
                 <Header />
 
-                <Container>
-                    <div className='slider_home'>
-                        <OwlCarousel
-                            className="owl-theme"
-                            {...this.state.options}
-                        >
-                            {this.state.sliders.map(slide =>
-                                <div className="item"><img src={slide.url}/></div>
-                            )}
-                        </OwlCarousel>
-                    </div>
-                </Container>
+                {
+                    this.state.sliders.length !== 0 ?
+                        <Container>
+                            <div className='slider_home'>
+                                <OwlCarousel
+                                    className="owl-theme"
+                                    {...this.state.options}
+                                >
+                                    {this.state.sliders.map(slide =>
+                                        <div className="item"><img src={slide.url}/></div>
+                                    )}
+                                </OwlCarousel>
+                            </div>
+                        </Container>
+                        :
+                        <div/>
+                }
 
                 <div className="content_view">
                     <Container>
+
+                        <div className='filter flex_between'>
+                            <div className='select_box selector'>
+                                <MdKeyboardArrowDown className='iconDown' />
+                                <select name="" id="" onChange={this.change.bind(this)} value={this.state.value}>
+                                    {
+                                        this.state.countries.map(item => (
+                                            <option key={item.value} value={item.id}>
+                                                {item.name}
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div className='select_box selector'>
+                                <MdKeyboardArrowDown className='iconDown' />
+                                <select name="" id="">
+                                    {
+                                        this.state.cities.map(item => (
+                                            <option key={item.value} value={item.value}>
+                                                {item.name}
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div className='select_box'>
+                                <button onClick={() => this.onClickFav()}>
+                                    <MdNearMe />
+                                    <span>الاقرب</span>
+                                </button>
+                            </div>
+                        </div>
+
                         <Row>
                             {this.state.items.map(item =>
                                 <Col xs="6" sm="4">

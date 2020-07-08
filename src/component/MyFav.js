@@ -10,6 +10,8 @@ import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
 
 import Header from '../component/Header';
+import CONST from '../const/api';
+
 
 import { Link } from 'react-router-dom';
 
@@ -31,7 +33,7 @@ class MyFav extends Component {
 
     componentDidMount() {
 
-        axios.post(`https://cors-anywhere.herokuapp.com/https://alaaelden.aait-sa.com/api/favourites`, { user_id : this.state.user_id })
+        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}favourites`, { user_id : this.state.user_id })
             .then(res => {
                 this.setState({ items : res.data.data, isLoading : false });
                 console.log('data', res.data);
@@ -45,7 +47,7 @@ class MyFav extends Component {
             isLoader : true
         });
 
-        axios.post(`https://cors-anywhere.herokuapp.com/https://alaaelden.aait-sa.com/api/favouriteBlog`, { id : id  , user_id : this.state.user_id })
+        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}favouriteBlog`, { id : id  , user_id : this.state.user_id })
             .then( (response)=> {
 
                 this.setState({

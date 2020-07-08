@@ -13,6 +13,8 @@ import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 
 import Header from '../component/Header';
 
+import CONST from '../const/api';
+
 import axios from 'axios';
 import {Link} from "react-router-dom";
 import {Animated} from "react-animated-css";
@@ -100,7 +102,7 @@ class Details extends Component {
 
         }else {
 
-            axios.post(`https://alaaelden.aait-sa.com/api/BlogDetails`, { id : id })
+            axios.post(`${CONST.url}BlogDetails`, { id : id })
                 .then( (response)=> {
 
                     this.setState({
@@ -131,7 +133,7 @@ class Details extends Component {
 
         }else {
 
-            axios.post(`https://alaaelden.aait-sa.com/api/BlogDetails`, { id : this.props.location.id })
+            axios.post(`${CONST.url}BlogDetails`, { id : this.props.location.id })
                 .then( (response)=> {
 
                     this.setState({
@@ -163,7 +165,7 @@ class Details extends Component {
 
         }else {
 
-            axios.post(`https://cors-anywhere.herokuapp.com/https://alaaelden.aait-sa.com/api/CommentBlog`, { blog_id : this.state.dataInfo.id, comment: this.state.writeComment, user_id : this.state.user_id })
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}CommentBlog`, { blog_id : this.state.dataInfo.id, comment: this.state.writeComment, user_id : this.state.user_id })
                 .then( (response)=> {
 
                     this.setState({

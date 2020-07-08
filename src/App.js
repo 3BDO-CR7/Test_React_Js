@@ -6,6 +6,8 @@ import Details from './component/Details';
 import signUp from './component/SignUp';
 import myFav from './component/MyFav';
 import AddAdv from './component/AddAdv';
+import About from './component/About';
+import TermsAdv from './component/TermsAdv';
 
 
 class App extends Component {
@@ -26,7 +28,9 @@ class App extends Component {
             <Router>
                   <Switch>
                     <Route exact path='/' component={Home} />
+                    <Route exact path='/About' component={About} />
                     <Route exact path='/myFav' component={myFav} />
+                    <Route exact path='/TermsAdv' component={TermsAdv} />
                     <Route exact path='/AddAdv' component={AddAdv} />
                     <Route path='/login' component={Login} />
                     <Route path='/signUp' component={signUp} />
