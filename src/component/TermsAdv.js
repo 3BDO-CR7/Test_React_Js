@@ -64,7 +64,7 @@ class TermsAdv extends Component {
                             </div>
                             <h4>{ this.state.text }</h4>
                             <div className='flex_between padding_all_30'>
-                                <Link to={{pathname: '/AddAdv/'}} className='padding_all_10 btn_blue color_white width_150'>
+                                <Link to={{pathname: '/SelectCategory/'}} className='padding_all_10 btn_blue color_white width_150'>
                                     موافق
                                 </Link>
                                 <Link to={{pathname: '/'}} className='padding_all_10 btn_red color_white width_150'>

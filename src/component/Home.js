@@ -31,6 +31,10 @@ class Home extends Component {
             cities              : [],
             Toasts              : '',
             value               : '',
+            countryId           : null,
+            cityId              : null,
+            latitude            : '',
+            longitude           : '',
             options             : {
                 loop        : true,
                 margin      : 10,
@@ -70,22 +74,56 @@ class Home extends Component {
 
     }
 
-    change(event){
+    getLocation(){
 
-        console.log('event', event.target.value)
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                console.log(position);
+                this.setState({longitude: position.coords.longitude});
+                this.setState({latitude: position.coords.latitude});
+            },
+            function(error) {
+                console.error("Error Code = " + error.code + " - " + error.message);
+            }
+        );
 
-        // axios.post(`${CONST.url}cities`, { lang: 'ar' , country_id : event.target.value })
-        //     .then( (res)=> {
-        //         this.setState({ cities: res.data.data });
-        //     });
+        setTimeout(()=>{
+            this.getBlogs();
+        },1000);
+    }
 
-        // setTimeout(()=>{
-        //     this.getBlogs();
-        // },1000);
+    changeCountry(event){
+
+        this.setState({ countryId : event.target.value });
+
+        axios.post(`${CONST.url}cities`, { lang: 'ar' , country_id : event.target.value })
+            .then( (res)=> {
+                this.setState({ cities: res.data.data });
+            });
+
+        setTimeout(()=>{
+            this.getBlogs();
+        },1000);
+    }
+
+    changeCity(event){
+
+        this.setState({ cityId : event.target.value });
+
+        setTimeout(()=>{
+            this.getBlogs();
+        },1000);
     }
 
     getBlogs(){
-        axios.get(`${CONST.url}get-blogs`)
+        axios.post(`${CONST.url}get-blogs`,
+            {
+                lang            : 'ar',
+                city_id         : this.state.cityId,
+                latitude        : this.state.latitude ,
+                longitude       : this.state.longitude ,
+                country_id      : this.state.countryId ,
+            })
             .then(res => {
                 this.setState({ items : res.data.data, isLoading : false });
             });
@@ -166,7 +204,8 @@ class Home extends Component {
                         <div className='filter flex_between'>
                             <div className='select_box selector'>
                                 <MdKeyboardArrowDown className='iconDown' />
-                                <select name="" id="" onChange={this.change.bind(this)} value={this.state.value}>
+                                <select name="" id="" onChange={this.changeCountry.bind(this)}>
+                                    <option hidden>آختر المدينه</option>
                                     {
                                         this.state.countries.map(item => (
                                             <option key={item.value} value={item.id}>
@@ -178,10 +217,11 @@ class Home extends Component {
                             </div>
                             <div className='select_box selector'>
                                 <MdKeyboardArrowDown className='iconDown' />
-                                <select name="" id="">
+                                <select name="" id="" onChange={this.changeCity.bind(this)}>
+                                    <option hidden>آختر الدوله</option>
                                     {
                                         this.state.cities.map(item => (
-                                            <option key={item.value} value={item.value}>
+                                            <option key={item.value} value={item.id}>
                                                 {item.name}
                                             </option>
                                         ))
@@ -189,49 +229,59 @@ class Home extends Component {
                                 </select>
                             </div>
                             <div className='select_box'>
-                                <button onClick={() => this.onClickFav()}>
+                                <button onClick={() => this.getLocation()}>
                                     <MdNearMe />
                                     <span>الاقرب</span>
                                 </button>
                             </div>
                         </div>
 
-                        <Row>
-                            {this.state.items.map(item =>
-                                <Col xs="6" sm="4">
-                                    <Animated
-                                        animationIn             = "fadeInUp"
-                                        animationInDuration     = {1000}
-                                        animationOutDuration    = {1000}
-                                        isVisible               = {true}
-                                    >
-                                        <div className="section_e3lan">
-                                            <div className="img_e3lan">
-                                                <button onClick={() => this.onClickFav(item.id)} className='clickFav'>
-                                                    {this.state.favNum === item.id ? (
-                                                        <MdFavorite />
-                                                    ) : (
-                                                        <MdFavoriteBorder />
-                                                    )}
-                                                </button>
-                                                <img src={ item.img } />
-                                                <p>{ item.date }</p>
-                                            </div>
-                                            <Link to={{pathname: '/details/'+ item.id, id : { id: item.id }}} className="nav-link">
-                                                <div className="block_e3lan">
-                                                    <h4>{ item.title }</h4>
-                                                    <p>{ item.description }</p>
-                                                    <h6>
-                                                        <span><FaUserAlt /> { item.user } </span>
-                                                        <span><FaMapMarkerAlt />  { item.date } </span>
-                                                    </h6>
+                        <div className='section_body padding_all_10'>
+
+                            <Row>
+                                {
+                                    this.state.items.length !== 0 ?
+                                        this.state.items.map(item =>
+                                            <Col xs="6" sm="4">
+                                            <Animated
+                                                animationIn             = "fadeInUp"
+                                                animationInDuration     = {1000}
+                                                animationOutDuration    = {1000}
+                                                isVisible               = {true}
+                                            >
+                                                <div className="section_e3lan">
+                                                    <div className="img_e3lan">
+                                                        <button onClick={() => this.onClickFav(item.id)} className='clickFav'>
+                                                            {this.state.favNum === item.id ? (
+                                                                <MdFavorite className='iconFav' />
+                                                            ) : (
+                                                                <MdFavoriteBorder className='iconFav' />
+                                                            )}
+                                                        </button>
+                                                        <img src={ item.img } />
+                                                        <p>{ item.date }</p>
+                                                    </div>
+                                                    <Link to={{pathname: '/details/'+ item.id, id : { id: item.id }}} className="nav-link">
+                                                        <div className="block_e3lan">
+                                                            <h4>{ item.title }</h4>
+                                                            <p>{ item.description }</p>
+                                                            <h6>
+                                                                <span><FaUserAlt /> { item.user } </span>
+                                                                <span><FaMapMarkerAlt />  { item.date } </span>
+                                                            </h6>
+                                                        </div>
+                                                    </Link>
                                                 </div>
-                                            </Link>
+                                            </Animated>
+                                        </Col>
+                                        )
+                                    :
+                                        <div className='no_data'>
+                                            <img src={require('../imgs/noData.png')} />
                                         </div>
-                                    </Animated>
-                                </Col>
-                            )}
-                        </Row>
+                                }
+                            </Row>
+                        </div>
                     </Container>
                 </div>
 

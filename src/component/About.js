@@ -1,75 +1,69 @@
-import React, { Component } from 'react';
+import React, { useState , useEffect } from "react";
 import {Container} from 'reactstrap';
 import '../App.css';
 import {Animated} from "react-animated-css";
 
 import Header from '../component/Header';
-import CONST from '../const/api';
+import {useSelector, useDispatch} from 'react-redux';
+import {getAbout} from '../actions/AboutAction';
 
+function About(navigation) {
 
-import { Link } from 'react-router-dom';
+    const [lang, setLang]       = useState('ar');
+    const about                 = useSelector(state => state.about.about);
+    const loader                = useSelector(state => state.about.loader);
+    const dispatch              = useDispatch();
 
-import axios from 'axios';
-
-class About extends Component {
-    constructor() {
-        super();
-        this.state = {
-            isLoading           : true,
-            user_id             : 123,
-            Toasts              : '',
-            text                : '',
-        };
+    function fetchData(){
+        dispatch(getAbout(lang));
     }
 
-    componentDidMount() {
+    useEffect(() => {
+        fetchData();
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchData();
+        });
 
-        axios.post(`${CONST.url}aboutUs`, { lang : 'ar'})
-            .then(res => {
-                this.setState({ text : res.data.data, isLoading : false });
-                console.log('data', res.data);
-            });
+        return unsubscribe;
+    }, [navigation , loader]);
 
-    }
-
-    render() {
-
-        if (this.state.isLoading === true) {
-            return (
+    function renderLoader(){
+        if (loader === false){
+            return(
                 <div className='loading'>
                     <img src={require('../imgs/loader.gif')} />
                 </div>
             );
         }
+    }
 
-        return (
+    return (
+        <div className="body_section">
 
-            <div className="body_section">
+            { renderLoader() }
 
-                <Header />
+            <Header />
 
-                <div className="content_view text_center">
-                    <Container>
-                        <div className='section_about'>
-                            <div className='overHidden'>
-                                <Animated
-                                    animationIn             = "fadeInUp"
-                                    animationInDuration     = {1000}
-                                    animationOutDuration    = {1000}
-                                    isVisible               = {true}
-                                >
-                                    <img src={require('../imgs/logo.png')} />
-                                </Animated>
-                            </div>
-                            <h4>{ this.state.text }</h4>
+            <div className="content_view text_center">
+                <Container>
+                    <div className='section_about'>
+                        <div className='overHidden'>
+                            <Animated
+                                animationIn             = "fadeInUp"
+                                animationInDuration     = {1000}
+                                animationOutDuration    = {1000}
+                                isVisible               = {true}
+                            >
+                                <img src={require('../imgs/logo.png')} />
+                            </Animated>
                         </div>
-                    </Container>
-                </div>
-
+                        <h4>{about}</h4>
+                    </div>
+                </Container>
             </div>
 
-        )
-    }
+        </div>
+    );
 }
 
 export default About;
