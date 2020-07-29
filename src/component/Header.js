@@ -15,6 +15,11 @@ class Header extends Component {
         console.log('user_data', localStorage.getItem('user_data'));
     }
 
+    logOut(){
+
+        localStorage.removeItem('user_data');
+    }
+
 
     render() {
         return (
@@ -35,17 +40,23 @@ class Header extends Component {
                                 <ul>
                                     <li><Link to={'/'} className="nav-link"> الرئيسيه </Link></li>
                                     <li><Link to={'/About'} className="nav-link"> من نحن </Link></li>
-                                    <li><Link to={'/myFav'} className="nav-link"> المفضله </Link></li>
-                                    <li><Link to={'/TermsAdv'} className="nav-link"> إضافه إعلان </Link></li>
+                                    <li><Link to={(this.state.userInfo === null) ? '/login' : '/myFav'} className="nav-link"> المفضله </Link></li>
+                                    <li><Link to={(this.state.userInfo === null) ? '/login' : '/TermsAdv'} className="nav-link"> إضافه إعلان </Link></li>
                                     {
                                         this.state.userInfo === null ?
-                                            <li><Link to={'/signUp'} className="nav-link"> التسجيل </Link></li>
+                                            <li><Link to={'/login'} className="nav-link"> تسجيل دخول </Link></li>
                                             :
                                             null
                                     }
                                     {
                                         this.state.userInfo === null ?
-                                            <li><Link to={'/login'} className="nav-link"> تسجيل دخول </Link></li>
+                                            <li><Link to={'/signUp'} className="nav-link"> حساب جديد </Link></li>
+                                            :
+                                            null
+                                    }
+                                    {
+                                        this.state.userInfo !== null ?
+                                            <li onClick={() => this.logOut()}><Link to={'/login'} className="nav-link"> تسجيل خروج </Link></li>
                                             :
                                             null
                                     }

@@ -33,19 +33,28 @@ class AddAdv extends Component {
             countries           : [],
             cities              : [],
             arrImg              : [],
+            years               : [],
+            year                : null,
         };
     }
 
     componentDidMount() {
 
 
-        axios.post(`${CONST.url}countries`, { lang : 'ar' })
+        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}countries`, { lang : 'ar' })
             .then(res => {
                 this.setState({
                     countries : res.data.data,
                     isLoading : false
                 });
             });
+
+        for(let i = 2020; i > 1990 ; i--){
+            this.state.years.push(JSON.stringify(i));
+        }
+
+        console.log('id push',this.props.location.state.id);
+        console.log('id push',this.props.location.state.car);
 
     }
 
@@ -57,9 +66,11 @@ class AddAdv extends Component {
 
     changeCountry(event){
 
-        this.setState({ countryId : event.target.value });
+        // this.setState({ countryId : event.target.value });
+        this.state.countryId = event.target.value
+        console.log('countryId', this.state.countryId)
 
-        axios.post(`${CONST.url}cities`, { lang: 'ar' , country_id : event.target.value })
+        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}cities`, { lang: 'ar' , country_id : event.target.value })
             .then( (res)=> {
                 this.setState({ cities: res.data.data });
             });
@@ -67,9 +78,18 @@ class AddAdv extends Component {
 
     changeCity(event){
 
-        this.setState({ cityId : event.target.value });
+        // this.setState({ cityId : event.target.value });
+        this.state.cityId = event.target.value
+        console.log('cityId', this.state.cityId)
 
     }
+
+    changeYears(event){
+
+        this.state.year = event.target.value
+        console.log('year', this.state.year)
+    }
+
     validate = () => {
         let isError = false;
         let msg = '';
@@ -77,6 +97,9 @@ class AddAdv extends Component {
         if( this.state.arrImg.length <= 0) {
             isError     = true;
             msg         = 'إدخل صور الاعلان';
+        }else if(this.state.year === null && this.props.location.state.car === 'car') {
+            isError     = true;
+            msg         = 'إختر الموديل';
         }else if(this.state.countryId === null) {
             isError     = true;
             msg         = 'إختر الدوله';
@@ -122,28 +145,52 @@ class AddAdv extends Component {
 
             this.setState({ loadFun : true });
 
-            axios.post(`${CONST.url}cities`,
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}uploadAd`,
                 {
                     lang                : 'ar' ,
                     title               : this.state.name,
+                    youtube             : this.state.youtube,
                     mobile              : this.state.phone,
+                    key                 : this.state.key,
                     price               : this.state.price,
                     description         : this.state.details,
                     country_id          : this.state.countryId,
                     city_id             : this.state.cityId,
-                    user_id             : '123',
-                    images              : this.state.imageList,
                     latitude            : null,
                     longitude           : null,
-                    category_id         : this.props.navigation.state.params.category_id,
-                    sub_category_id     : (this.props.navigation.state.params.sub_category_id) ? this.props.navigation.state.params.sub_category_id : null,
+                    user_id             : '123',
+                    category_id         : this.props.location.state.id,
                     type                : '1',
                     is_refreshed        : 'true',
                     is_mobile           : 'true',
                     is_chat             : 'true',
+                    model_id            : null,
+                    section_id          : null,
+                    model               : this.state.year,
+                    images              : this.state.arrImg
                 })
                 .then( (res)=> {
-                    this.setState({ cities: res.data.data });
+                    console.log('res', res.data)
+
+                    this.setState({
+                        loadFun             : false,
+                        isError             : res.data.msg,
+                        errToasts           : true,
+                    });
+
+                    setTimeout(
+                        function() {
+                            this.setState({errToasts: false});
+                        }.bind(this),
+                        2000
+                    );
+
+                    console.log('imageList', this.state.arrImg)
+
+                    if (res.data.value !== '0'){
+                        this.props.history.push('/');
+                    }
+
                 });
 
         }
@@ -218,6 +265,26 @@ class AddAdv extends Component {
                             <Form className="form_add" onSubmit={this.onSubmit.bind(this)} noValidate>
 
                                 <Row>
+                                    {
+                                        (this.props.location.state.car === 'car') ?
+                                            <Col xs="12" sm="12">
+                                                <div className='select_form selector mb-4'>
+                                                    <MdKeyboardArrowDown className='iconDown' />
+                                                    <select name="" id="" onChange={this.changeYears.bind(this)}>
+                                                        <option hidden>آختر الموديل</option>
+                                                        {
+                                                            this.state.years.map(year => (
+                                                                <option key={year} value={year}>
+                                                                    {year}
+                                                                </option>
+                                                            ))
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </Col>
+                                            :
+                                            <div/>
+                                    }
                                     <Col xs="12" sm="6">
                                         <div className='select_form selector'>
                                             <MdKeyboardArrowDown className='iconDown' />

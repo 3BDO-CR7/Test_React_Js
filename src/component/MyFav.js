@@ -102,39 +102,46 @@ class MyFav extends Component {
 
                 <Header />
 
-                <div className="content_view">
+                <div className="content_view section_body padding_all_10">
                     <Container>
                         <Row>
-                            {this.state.items.map((item, i) =>
-                                <Col xs="6" sm="4">
-                                    <Animated
-                                        animationIn             = "fadeInUp"
-                                        animationInDuration     = {1000}
-                                        animationOutDuration    = {1000}
-                                        isVisible               = {true}
-                                    >
-                                        <div className="section_e3lan">
-                                            <div className="img_e3lan">
-                                                <button onClick={() => this.onClickFav(item.id, i)} className='clickFav'>
-                                                    <MdFavorite className='iconFav' />
-                                                </button>
-                                                <img src={ item.img } />
-                                                <p>{ item.date }</p>
-                                            </div>
-                                            <Link to={{pathname: '/details/'+ item.id, id : { id: item.id }}} className="nav-link">
-                                                <div className="block_e3lan">
-                                                    <h4>{ item.title }</h4>
-                                                    <p>{ item.description }</p>
-                                                    <h6>
-                                                        <span><FaUserAlt /> { item.user } </span>
-                                                        <span><FaMapMarkerAlt />  { item.date } </span>
-                                                    </h6>
+                            {
+                                this.state.items.length !== 0 ?
+                                    this.state.items.map((item,i) =>
+                                        <Col xs="6" sm="4">
+                                            <Animated
+                                                animationIn             = "fadeInUp"
+                                                animationInDuration     = {1000}
+                                                animationOutDuration    = {1000}
+                                                isVisible               = {true}
+                                            >
+                                                <div className="section_e3lan">
+                                                    <div className="img_e3lan">
+                                                        <button onClick={() => this.onClickFav(item.id, i)} className='clickFav'>
+                                                            <MdFavorite className='iconFav' />
+                                                        </button>
+                                                        <img src={ item.img } />
+                                                        <p>{ item.date }</p>
+                                                    </div>
+                                                    <Link to={{pathname: '/details/'+ item.id, id : { id: item.id }}} className="nav-link">
+                                                        <div className="block_e3lan">
+                                                            <h4>{ item.title }</h4>
+                                                            <p>{ item.description }</p>
+                                                            <h6>
+                                                                <span><FaUserAlt /> { item.user } </span>
+                                                                <span><FaMapMarkerAlt />  { item.date } </span>
+                                                            </h6>
+                                                        </div>
+                                                    </Link>
                                                 </div>
-                                            </Link>
-                                        </div>
-                                    </Animated>
-                                </Col>
-                            )}
+                                            </Animated>
+                                        </Col>
+                                    )
+                                    :
+                                    <div className='no_data'>
+                                        <img src={require('../imgs/noData.png')} />
+                                    </div>
+                            }
                         </Row>
                     </Container>
                 </div>

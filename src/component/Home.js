@@ -66,7 +66,7 @@ class Home extends Component {
 
         this.getBlogs();
 
-        axios.post(`${CONST.url}countries`, { lang : 'ar' })
+        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}countries`, { lang : 'ar' })
             .then(res => {
                 this.setState({ countries : res.data.data});
                 console.log('res', res.data.data)
@@ -96,7 +96,7 @@ class Home extends Component {
 
         this.setState({ countryId : event.target.value });
 
-        axios.post(`${CONST.url}cities`, { lang: 'ar' , country_id : event.target.value })
+        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}cities`, { lang: 'ar' , country_id : event.target.value })
             .then( (res)=> {
                 this.setState({ cities: res.data.data });
             });
@@ -116,7 +116,7 @@ class Home extends Component {
     }
 
     getBlogs(){
-        axios.post(`${CONST.url}get-blogs`,
+        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}get-blogs`,
             {
                 lang            : 'ar',
                 city_id         : this.state.cityId,
@@ -128,37 +128,6 @@ class Home extends Component {
                 this.setState({ items : res.data.data, isLoading : false });
             });
     }
-
-    onClickFav = (id) => {
-
-        if(localStorage.getItem('user_data') === null || localStorage.getItem('user_data') === undefined){
-            this.props.history.push('/login');
-        }else {
-            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}/favouriteBlog`, { id : id  , user_id : this.state.user_id })
-                .then( (response)=> {
-
-                    this.setState({
-                        Toasts              : response.data.msg,
-                        errToasts           : true,
-                        favNum              : id,
-                    });
-
-                    setTimeout(
-                        function() {
-                            this.setState({errToasts: false});
-                        }.bind(this),
-                        3000
-                    );
-
-                })
-                .catch( (error)=> {
-                    this.setState({isLoading: false});
-                }).then(()=>{
-                this.setState({isLoading: false});
-            });
-        }
-
-    };
 
     render() {
 
@@ -251,13 +220,6 @@ class Home extends Component {
                                             >
                                                 <div className="section_e3lan">
                                                     <div className="img_e3lan">
-                                                        <button onClick={() => this.onClickFav(item.id)} className='clickFav'>
-                                                            {this.state.favNum === item.id ? (
-                                                                <MdFavorite className='iconFav' />
-                                                            ) : (
-                                                                <MdFavoriteBorder className='iconFav' />
-                                                            )}
-                                                        </button>
                                                         <img src={ item.img } />
                                                         <p>{ item.date }</p>
                                                     </div>

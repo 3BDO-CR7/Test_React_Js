@@ -8,6 +8,8 @@ import { MdPhoneIphone } from 'react-icons/md';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
+import { MdFavoriteBorder, MdFavorite} from 'react-icons/md';
+
 
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 
@@ -26,10 +28,11 @@ class Details extends Component {
             dataInfo            : '',
             writeComment        : '',
             isError             : '',
+            Toasts              : '',
             empty               : 'لا يوجد شئ للعرض',
             intervalId          : 0,
             thePosition         : false,
-            user_id             : 123,
+            user_id             : null,
             items               : [],
             sliders             : [],
             comments            : [],
@@ -102,7 +105,7 @@ class Details extends Component {
 
         }else {
 
-            axios.post(`${CONST.url}BlogDetails`, { id : id })
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}BlogDetails`, { id : id })
                 .then( (response)=> {
 
                     this.setState({
@@ -127,13 +130,17 @@ class Details extends Component {
 
     componentDidMount() {
 
+        let user_id = JSON.parse(localStorage.getItem('user_data'));
+
+        this.setState({ user_id : user_id.id })
+
         if(this.props.location.id === undefined || this.props.location.id === null){
 
             this.props.history.push('/');
 
         }else {
 
-            axios.post(`${CONST.url}BlogDetails`, { id : this.props.location.id })
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}BlogDetails`, { id : this.props.location.id.id })
                 .then( (response)=> {
 
                     this.setState({
@@ -143,6 +150,8 @@ class Details extends Component {
                         results             : response.data.data.results,
                         isLoading           : false
                     });
+
+                    console.log('dataInfo', response.data.data)
 
                 })
                 .catch( (error)=> {
@@ -165,7 +174,12 @@ class Details extends Component {
 
         }else {
 
-            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}CommentBlog`, { blog_id : this.state.dataInfo.id, comment: this.state.writeComment, user_id : this.state.user_id })
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}CommentBlog`, {
+                blog_id : this.state.dataInfo.id,
+                comment: this.state.writeComment,
+                user_id : this.state.user_id,
+                lang: 'ar'
+            })
                 .then( (response)=> {
 
                     this.setState({
@@ -186,6 +200,41 @@ class Details extends Component {
 
     }
 
+    onClickFav = () => {
+
+        if(localStorage.getItem('user_data') === null || localStorage.getItem('user_data') === undefined){
+            this.props.history.push('/login');
+        }else {
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}/favouriteBlog`,
+                {
+                    lang        : 'ar',
+                    user_id     : this.state.user_id,
+                    id          : this.props.location.id.id
+                }).then( (response)=> {
+
+                    this.setState({
+                        Toasts              : response.data.msg,
+                        errToasts           : true,
+                        favNum              : response.data.fav,
+                    });
+
+                    setTimeout(
+                        function() {
+                            this.setState({errToasts: false});
+                        }.bind(this),
+                        3000
+                    );
+
+                })
+                .catch( (error)=> {
+                    this.setState({isLoading: false});
+                }).then(()=>{
+                this.setState({isLoading: false});
+            });
+        }
+
+    };
+
     render() {
 
         if (this.state.isLoading === true) {
@@ -199,6 +248,10 @@ class Details extends Component {
         return (
 
             <div className="body_section">
+
+                <div className={this.state.errToasts ? 'toaster showToasts' : 'toaster hideToasts'}>
+                    <h6>{ this.state.Toasts }</h6>
+                </div>
 
                 <Header />
 
@@ -219,6 +272,13 @@ class Details extends Component {
 
                     <div className='slider_home'>
                         <h3 className='infoData'>{ this.state.dataInfo.date }</h3>
+                        <button onClick={() => this.onClickFav()} className='clickFav'>
+                            {this.state.favNum === 1 ? (
+                                <MdFavorite className='iconFav' />
+                            ) : (
+                                <MdFavoriteBorder className='iconFav' />
+                            )}
+                        </button>
                         <OwlCarousel
                             className="owl-theme"
                             {...this.state.slideProudct}

@@ -1,3 +1,3 @@
 export default {
-    url   : 'https://alaaelden.aait-sa.com/api/',
+    url   : 'http://Jurabalhawi.com/api/',
 };

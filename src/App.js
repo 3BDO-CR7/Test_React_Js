@@ -9,6 +9,10 @@ import AddAdv from './component/AddAdv';
 import About from './component/About';
 import TermsAdv from './component/TermsAdv';
 import SelectCategory from './component/SelectCategory';
+import SelectSubCategory from './component/SelectSubCategory';
+import ForgetPassword from './component/ForgetPassword';
+import NewPassword from './component/NewPassword';
+import ActiveAccount from './component/ActiveAccount';
 
 
 class App extends Component {
@@ -29,13 +33,17 @@ class App extends Component {
             <Router>
                   <Switch>
                     <Route exact path='/' component={Home} />
+                    <Route path='/login' component={Login} />
+                    <Route path='/signUp' component={signUp} />
+                    <Route path='/ForgetPassword' component={ForgetPassword} />
+                    <Route path='/NewPassword' component={NewPassword} />
+                    <Route path='/ActiveAccount' component={ActiveAccount} />
                     <Route exact path='/About' component={About} />
                     <Route exact path='/myFav' component={myFav} />
                     <Route exact path='/SelectCategory' component={SelectCategory} />
+                    <Route exact path='/SelectSubCategory' component={SelectSubCategory} />
                     <Route exact path='/TermsAdv' component={TermsAdv} />
                     <Route exact path='/AddAdv' component={AddAdv} />
-                    <Route path='/login' component={Login} />
-                    <Route path='/signUp' component={signUp} />
                     <Route path='/details' component={Details} />
                   </Switch>
             </Router>

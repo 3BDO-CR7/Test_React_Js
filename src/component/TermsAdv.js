@@ -24,7 +24,7 @@ class TermsAdv extends Component {
 
     componentDidMount() {
 
-        axios.post(`${CONST.url}adsTermsAndConditions`, { lang : 'ar'})
+        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}adsTermsAndConditions`, { lang : 'ar'})
             .then(res => {
                 this.setState({ text : res.data.data, isLoading : false });
                 console.log('data', res.data);

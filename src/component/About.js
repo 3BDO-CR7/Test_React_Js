@@ -14,10 +14,6 @@ function About(navigation) {
     const loader                = useSelector(state => state.about.loader);
     const dispatch              = useDispatch();
 
-    function fetchData(){
-        dispatch(getAbout(lang));
-    }
-
     useEffect(() => {
         fetchData();
         const unsubscribe = navigation.addListener('focus', () => {
@@ -26,6 +22,10 @@ function About(navigation) {
 
         return unsubscribe;
     }, [navigation , loader]);
+
+    function fetchData(){
+        dispatch(getAbout(lang));
+    }
 
     function renderLoader(){
         if (loader === false){
