@@ -68,7 +68,7 @@ class Home extends Component {
 
         axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}countries`, { lang : 'ar' })
             .then(res => {
-                this.setState({ countries : res.data.data});
+                this.setState({ countries : res.data.data, isLoading : false});
                 console.log('res', res.data.data)
             });
 
@@ -98,7 +98,7 @@ class Home extends Component {
 
         axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}cities`, { lang: 'ar' , country_id : event.target.value })
             .then( (res)=> {
-                this.setState({ cities: res.data.data });
+                this.setState({ cities: res.data.data, isLoading : false });
             });
 
         setTimeout(()=>{

@@ -13,6 +13,9 @@ import SelectSubCategory from './component/SelectSubCategory';
 import ForgetPassword from './component/ForgetPassword';
 import NewPassword from './component/NewPassword';
 import ActiveAccount from './component/ActiveAccount';
+import Profile from './component/Profile';
+import MyAdv from './component/MyAdv';
+import EditProfile from './component/EditProfile';
 
 
 class App extends Component {
@@ -39,6 +42,9 @@ class App extends Component {
                     <Route path='/NewPassword' component={NewPassword} />
                     <Route path='/ActiveAccount' component={ActiveAccount} />
                     <Route exact path='/About' component={About} />
+                    <Route exact path='/Profile' component={Profile} />
+                    <Route exact path='/EditProfile' component={EditProfile} />
+                    <Route exact path='/MyAdv' component={MyAdv} />
                     <Route exact path='/myFav' component={myFav} />
                     <Route exact path='/SelectCategory' component={SelectCategory} />
                     <Route exact path='/SelectSubCategory' component={SelectSubCategory} />

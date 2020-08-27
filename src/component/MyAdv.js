@@ -26,8 +26,9 @@ class MyFav extends Component {
             errToasts           : false,
             favNum              : 0,
             user_id             : null,
-            items               : [],
             Toasts              : '',
+            items               : [],
+            blog_photo          : [],
         };
     }
 
@@ -35,48 +36,18 @@ class MyFav extends Component {
 
         let user_id = JSON.parse(localStorage.getItem('user_data'));
 
-        this.setState({ user_id : user_id.id })
+        this.setState({ user_id : user_id.id });
 
-        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}favourites`, { user_id : user_id.id })
+        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}myFreeBlogs`, { lang : 'ar', user_id : user_id.id })
             .then(res => {
-                this.setState({ items : res.data.data, isLoading : false });
-                console.log('data', res.data);
+                this.setState({
+                    items           : res.data.data,
+                    blog_photo      : res.data.data_photo,
+                    isLoading       : false
+                });
             });
 
     }
-
-    onClickFav = (id, i) => {
-
-        this.setState({
-            isLoader : true
-        });
-
-        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}favouriteBlog`, { id : id  , user_id : this.state.user_id })
-            .then( (response)=> {
-
-                this.setState({
-                    isLoader            : false,
-                    Toasts              : response.data.msg,
-                    errToasts           : true,
-                });
-
-                this.state.items.splice(i,1);
-
-                setTimeout(
-                    function() {
-                        this.setState({errToasts: false});
-                    }.bind(this),
-                    3000
-                );
-
-            })
-            .catch( (error)=> {
-                this.setState({isLoader: false});
-            }).then(()=>{
-            this.setState({isLoader: false});
-        });
-
-    };
 
     render() {
 
@@ -121,9 +92,6 @@ class MyFav extends Component {
                                             >
                                                 <div className="section_e3lan">
                                                     <div className="img_e3lan">
-                                                        <button onClick={() => this.onClickFav(item.id, i)} className='clickFav'>
-                                                            <MdFavorite className='iconFav' />
-                                                        </button>
                                                         <img src={ item.img } />
                                                         <p>{ item.date }</p>
                                                     </div>

@@ -7,9 +7,8 @@ import { MdKeyboardArrowDown} from 'react-icons/md';
 import Header from '../component/Header';
 import axios from "axios";
 import CONST from "../const/api";
-import {Link} from "react-router-dom";
 
-class SignUp extends Component {
+class EditProfile extends Component {
     constructor() {
         super();
         this.state = {
@@ -20,7 +19,6 @@ class SignUp extends Component {
             email               : '',
             phone               : '',
             name                : '',
-            password            : '',
             countryId           : null,
             cityId              : null,
             countries           : [],
@@ -30,20 +28,46 @@ class SignUp extends Component {
 
     componentDidMount() {
 
-        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}countries`, { lang : 'ar' })
-            .then(res => {
-                this.setState({
-                    countries : res.data.data,
-                    isLoading : false
-                });
+        if (this.state.userInfo === null) {
+
+            this.props.history.push('/');
+
+        }else {
+
+            let user_id = JSON.parse(localStorage.getItem('user_data'));
+
+            this.setState({
+                avatar : user_id.avatar,
+                cityId : user_id.city_id,
+                countryId : user_id.country_id,
+                email : user_id.email,
+                phone : user_id.mobile,
+                name : user_id.name,
+                user_id : user_id.id
             });
+
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}countries`, { lang : 'ar' })
+                .then(res => {
+                    this.setState({
+                        countries : res.data.data,
+                        isLoading : false
+                    });
+                });
+
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}cities`, { lang: 'ar' , country_id : user_id.country_id })
+                .then( (res)=> {
+                    this.setState({
+                        cities: res.data.data ,
+                        isLoading : false
+                    });
+                });
+        }
 
     }
 
     changeCountry(event){
 
         this.state.countryId = event.target.value
-        console.log('countryId', this.state.countryId)
 
         axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}cities`, { lang: 'ar' , country_id : event.target.value })
             .then( (res)=> {
@@ -53,9 +77,7 @@ class SignUp extends Component {
 
     changeCity(event){
 
-        // this.setState({ cityId : event.target.value });
         this.state.cityId = event.target.value
-        console.log('cityId', this.state.cityId)
 
     }
 
@@ -78,12 +100,6 @@ class SignUp extends Component {
         }else if(this.state.cityId === null) {
             isError     = true;
             msg         = 'إختر المدينه';
-        }else if(this.state.password.length <= 0) {
-            isError     = true;
-            msg         = 'ادخل كلمه المرور';
-        }else if(this.state.password.length < 6) {
-            isError     = true;
-            msg         = 'كلمه المرور لا تقل عن ٦ حروف او ارقام';
         }
         if (msg !== ''){
             this.setState({
@@ -111,17 +127,19 @@ class SignUp extends Component {
 
             this.setState({ loadFun : true });
 
-            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}signUp`,
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}editProfile`,
                 {
-                    lang: this.props.lang ,
-                    phone : this.state.phone ,
-                    email : this.state.email ,
-                    files :  this.state.avatar,
-                    name : this.state.name ,
-                    password : this.state.password ,
-                    key : this.state.key,
-                    country_id: this.state.countryId ,
-                    city_id : this.state.cityId
+                    lang                : 'ar',
+                    name                : this.state.name,
+                    avatar              : this.state.avatar,
+                    country_id          : this.state.countryId,
+                    city_id             : this.state.cityId,
+                    user_id             : this.state.user_id,
+                    phone               : this.state.mobile,
+                    email               : this.state.email,
+                    password            : '',
+                    mute                : '',
+                    key                 : '+20',
                 })
                 .then( (res)=> {
                     this.setState({
@@ -177,7 +195,6 @@ class SignUp extends Component {
                                             type        = "text"
                                             name        = "name"
                                             id          = "exampleName"
-                                            placeholder = 'الاسم بالكامل'
                                             value       = {this.state.name}
                                             onChange    = {e => {this.setState({name : e.target.value})}}
                                         />
@@ -187,7 +204,6 @@ class SignUp extends Component {
                                             type        = "phone"
                                             name        = "phone"
                                             id          = "examplePhone"
-                                            placeholder = 'رقم الجوال'
                                             value       = {this.state.phone}
                                             onChange    = {e => {this.setState({phone : e.target.value})}}
                                         />
@@ -197,15 +213,13 @@ class SignUp extends Component {
                                             type        = "email"
                                             name        = "email"
                                             id          = "exampleEmail"
-                                            placeholder = 'البريد الإلكتروني'
                                             value       = {this.state.email}
                                             onChange    = {e => {this.setState({email : e.target.value})}}
                                         />
                                     </div>
                                     <div className='select_form selector mt-3 mb-3'>
                                         <MdKeyboardArrowDown className='iconDown' />
-                                        <select name="" id="" onChange={this.changeCountry.bind(this)}>
-                                            <option hidden>آختر الدوله</option>
+                                        <select name="" id="" value={this.state.countryId} onChange={this.changeCountry.bind(this)}>
                                             {
                                                 this.state.countries.map(item => (
                                                     <option key={item.value} value={item.id}>
@@ -217,8 +231,7 @@ class SignUp extends Component {
                                     </div>
                                     <div className='select_form selector mt-3 mb-3'>
                                         <MdKeyboardArrowDown className='iconDown' />
-                                        <select name="" id="" onChange={this.changeCity.bind(this)}>
-                                            <option hidden>آختر المدينه</option>
+                                        <select name="" id="" value={this.state.cityId} onChange={this.changeCity.bind(this)}>
                                             {
                                                 this.state.cities.map(item => (
                                                     <option key={item.value} value={item.id}>
@@ -228,27 +241,14 @@ class SignUp extends Component {
                                             }
                                         </select>
                                     </div>
-                                    <div className="input_grop mt-3 mb-3">
-                                        <Input
-                                            type        = "password"
-                                            name        = "password"
-                                            id          = "examplePassword"
-                                            placeholder = 'كلمه المرور'
-                                            value       = {this.state.password}
-                                            onChange    = {e => {this.setState({password : e.target.value})}}
-                                        />
-                                    </div>
                                     <h4 className='Error_Text'>{ this.state.isError }</h4>
                                     <Button
                                         color           = "info"
                                         className       = "btn_button"
                                         type            = "submit"
                                     >
-                                        تسجيل
+                                        تعديل الحساب
                                     </Button>
-                                    <Link to={{pathname: '/Login/'}} className="nav-link">
-                                        <h6 className='text_center'>لديك حساب ؟</h6>
-                                    </Link>
                                 </Form>
                             </div>
                         </div>
@@ -262,4 +262,4 @@ class SignUp extends Component {
     }
 }
 
-export default SignUp;
+export default EditProfile;

@@ -106,13 +106,14 @@ class Login extends Component {
                 >
                     <Form className="form_control" onSubmit={this.onSubmit.bind(this)} noValidate>
                         <img src={require('../imgs/logo.png')} />
-                        <div className="input_grop">
-                            <Label for="examplePhone">رقم الجوال</Label>
+                        <div className="input_grop mt-5 mb-5">
+                            {/*<Label for="examplePhone">رقم الجوال</Label>*/}
                             <div className='group_item position-relative'>
                                 <Input
                                     type        = "phone"
                                     name        = "phone"
                                     id          = "examplePhone"
+                                    placeholder = 'رقم الجوال'
                                     value       = {this.state.phone}
                                     onChange    = {e => {this.setState({phone : e.target.value})}}
                                 />
@@ -131,12 +132,13 @@ class Login extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div className="input_grop">
-                            <Label for="examplePassword">كلمه المرور</Label>
+                        <div className="input_grop mt-5 mb-5">
+                            {/*<Label for="examplePassword">كلمه المرور</Label>*/}
                             <Input
                                 type        = "password"
                                 name        = "password"
                                 id          = "examplePassword"
+                                placeholder = 'كلمه المرور'
                                 value       = {this.state.password}
                                 onChange    = {e => {this.setState({password : e.target.value})}}
                             />

@@ -43,6 +43,12 @@ class Header extends Component {
                                     <li><Link to={(this.state.userInfo === null) ? '/login' : '/myFav'} className="nav-link"> المفضله </Link></li>
                                     <li><Link to={(this.state.userInfo === null) ? '/login' : '/TermsAdv'} className="nav-link"> إضافه إعلان </Link></li>
                                     {
+                                        this.state.userInfo !== null ?
+                                            <li><Link to={'/Profile'} className="nav-link"> حسابي </Link></li>
+                                            :
+                                            null
+                                    }
+                                    {
                                         this.state.userInfo === null ?
                                             <li><Link to={'/login'} className="nav-link"> تسجيل دخول </Link></li>
                                             :

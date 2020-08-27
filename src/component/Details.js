@@ -140,7 +140,7 @@ class Details extends Component {
 
         }else {
 
-            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}BlogDetails`, { id : this.props.location.id.id })
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}BlogDetails`, { id : this.props.location.id.id, user_id : user_id.id })
                 .then( (response)=> {
 
                     this.setState({
@@ -148,6 +148,7 @@ class Details extends Component {
                         sliders             : response.data.data.images,
                         comments            : response.data.data.comments,
                         results             : response.data.data.results,
+                        favNum              : response.data.data.is_fav,
                         isLoading           : false
                     });
 

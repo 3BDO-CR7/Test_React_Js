@@ -30,6 +30,7 @@ class AddAdv extends Component {
             details             : '',
             countryId           : null,
             cityId              : null,
+            user_id             : null,
             countries           : [],
             cities              : [],
             arrImg              : [],
@@ -40,6 +41,9 @@ class AddAdv extends Component {
 
     componentDidMount() {
 
+        let user_id = JSON.parse(localStorage.getItem('user_data'));
+
+        this.setState({ user_id : user_id.id })
 
         axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}countries`, { lang : 'ar' })
             .then(res => {
@@ -156,9 +160,9 @@ class AddAdv extends Component {
                     description         : this.state.details,
                     country_id          : this.state.countryId,
                     city_id             : this.state.cityId,
-                    latitude            : null,
-                    longitude           : null,
-                    user_id             : '123',
+                    latitude            : 26.8206,
+                    longitude           : 30.8025,
+                    user_id             : this.state.user_id,
                     category_id         : this.props.location.state.id,
                     type                : '1',
                     is_refreshed        : 'true',

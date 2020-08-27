@@ -5,6 +5,7 @@ import {Animated} from "react-animated-css";
 import axios from "axios";
 import CONST from "../const/api";
 import {Link} from "react-router-dom";
+import { MdKeyboardArrowDown} from 'react-icons/md';
 
 class ForgetPassword extends Component {
     constructor() {
@@ -12,12 +13,25 @@ class ForgetPassword extends Component {
         this.state = {
             phone           : '',
             isError         : '',
-            isLoading       : true
+            isLoading       : true,
+            codes           : [],
+            code            : null
         };
     }
 
     componentWillMount() {
-        this.setState({isLoading : false});
+
+
+        axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}codes`, {
+            lang: 'ar'
+        }).then( (response)=> {
+            this.setState({codes: response.data.data});
+        }).catch( (error)=> {
+            this.setState({isLoading : false});
+        }).then(()=>{
+            this.setState({isLoading : false});
+        });
+
     }
 
     onSubmit(event){
@@ -28,21 +42,22 @@ class ForgetPassword extends Component {
 
         if(this.state.phone === ''){
             this.setState({ isError 	: 'إدخل رقم الهاتف' });
+        }else if(this.state.code === null){
+            this.setState({ isError 	: 'إدخل كود الدوله' });
         }else {
 
-            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}signIn`, {
+            axios.post(`https://cors-anywhere.herokuapp.com/${CONST.url}forgetPassword`, {
                 phone : this.state.phone,
-                password : this.state.password,
-                device_id : 123,
-                key : '+20',
+                key : this.state.code,
                 lang : 'ar'
             }).then( (response)=> {
 
                 this.setState({ isError 	: response.data.msg });
 
-                console.log('response', response.data)
+                console.log('response', response.data.data)
 
                 // if (response.data.value !== '0'){
+                //
                 //     this.props.history.push('/');
                 // }
 
@@ -53,17 +68,13 @@ class ForgetPassword extends Component {
                 this.setState({isLoader: false});
             });
 
-
-
-            // if(this.state.phone === 'sh3wza@gmail.com' && this.state.password === '123'){
-            //     this.props.history.push('/');
-            //     const data = { 'phone' : this.state.phone , 'password' : this.state.password };
-            //     localStorage.setItem('user_data', JSON.stringify(data));
-            // }else{
-            //     this.setState({ isError 	: 'هذه البيانات غير صحيحه' });
-            // }
-
         }
+
+    }
+
+    changeCode(event){
+
+        this.state.code = event.target.value
 
     }
 
@@ -88,15 +99,31 @@ class ForgetPassword extends Component {
                     >
                         <Form className="form_control" onSubmit={this.onSubmit.bind(this)} noValidate>
                             <img src={require('../imgs/logo.png')} />
-                            <div className="input_grop">
-                                <Label for="examplePhone">رقم الجوال</Label>
-                                <Input
-                                    type        = "phone"
-                                    name        = "phone"
-                                    id          = "examplePhone"
-                                    value       = {this.state.phone}
-                                    onChange    = {e => {this.setState({phone : e.target.value})}}
-                                />
+                            <div className="input_grop mt-5 mb-5">
+                                {/*<Label for="examplePhone">رقم الجوال</Label>*/}
+                                <div className='group_item position-relative'>
+                                    <Input
+                                        type        = "phone"
+                                        name        = "phone"
+                                        id          = "examplePhone"
+                                        placeholder = 'رقم الجوال'
+                                        value       = {this.state.phone}
+                                        onChange    = {e => {this.setState({phone : e.target.value})}}
+                                    />
+                                    <div className='select_code selector'>
+                                        <MdKeyboardArrowDown className='iconDown' />
+                                        <select name="" id="" onChange={this.changeCode.bind(this)}>
+                                            <option hidden>كود الدوله</option>
+                                            {
+                                                this.state.codes.map(code => (
+                                                    <option key={code} value={code}>
+                                                        {code}
+                                                    </option>
+                                                ))
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
                             <h4 className='Error_Text'>{ this.state.isError }</h4>
